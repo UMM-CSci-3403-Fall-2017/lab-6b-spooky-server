@@ -123,9 +123,12 @@ public class ExchangeRateReader {
      */
     public float getExchangeRate(
     		String fromCurrency, String toCurrency,
-            int year, int month, int day) throws IOException, ParserConfigurationException, SAXException  {
-    			
-    	//TODO write method
-    	return 0;
+            int year, int month, int day) throws IOException, ParserConfigurationException, SAXException  {		
+        
+       	float rate1 = getExchangeRate(fromCurrency,year,month,day);
+       	
+       	float rate2 = getExchangeRate(toCurrency,year,month,day);
+       	
+       	return (rate1/rate2);
     }
 }
