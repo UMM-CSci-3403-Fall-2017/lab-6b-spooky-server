@@ -44,6 +44,7 @@ public class ExchangeRateReader {
      */
     public ExchangeRateReader(String baseURL) throws IOException, ParserConfigurationException {
 
+    	//initialize exchange rate reader using base URL
     	dbf = DocumentBuilderFactory.newInstance();
     	url = new URL(baseURL);
     	builder = dbf.newDocumentBuilder();
@@ -69,6 +70,7 @@ public class ExchangeRateReader {
     	
     	float rate = 0;  
     	
+    	//convert one digit dates to two digit
     	String zeroMonth = Integer.toString(month);
     	String zeroDay = Integer.toString(day); 
     	
@@ -80,10 +82,11 @@ public class ExchangeRateReader {
     		zeroDay = "0" + Integer.toString(day);
     	}
     	
+    	//assemble new URL
     	String relativePath = Integer.toString(year) + "/" + zeroMonth + "/" + zeroDay + ".xml";	
-
         URL newUrl = new URL(url.toExternalForm() + relativePath);  
         
+        //open stream at new url and parse xml
         xmlStream = newUrl.openStream();
     	builder = dbf.newDocumentBuilder();
     	xml = builder.parse(xmlStream);
@@ -91,16 +94,16 @@ public class ExchangeRateReader {
         elem.normalize();
         NodeList tagged = elem.getElementsByTagName("*");
         
-    	// find requested
+    	// find requested node depending on currency code input
         for (int i = 0; i < tagged.getLength(); i++) {
                 Node node = tagged.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     if(node.getNodeName()=="currency_code" && node.getTextContent().equals(currencyCode)) {
-                    	System.out.println(node.getNextSibling().getNextSibling().getTextContent());    
                     	rate = Float.parseFloat(node.getNextSibling().getNextSibling().getTextContent());        
                     }
                 }
             }
+        //return float rate
         return rate;
     }
 
@@ -125,10 +128,11 @@ public class ExchangeRateReader {
     		String fromCurrency, String toCurrency,
             int year, int month, int day) throws IOException, ParserConfigurationException, SAXException  {		
         
-       	float rate1 = getExchangeRate(fromCurrency,year,month,day);
-       	
+    	//use exchange rate method to obtain both rate floats
+       	float rate1 = getExchangeRate(fromCurrency,year,month,day);    	
        	float rate2 = getExchangeRate(toCurrency,year,month,day);
        	
+       	//return new rate
        	return (rate1/rate2);
     }
 }
